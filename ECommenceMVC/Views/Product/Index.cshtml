@@ -1,0 +1,48 @@
+﻿@model List<ECommenceMVC.Core.Models.Response.ProductResponse>
+
+@{
+    ViewData["Title"] = "Ürünler";
+    var categories = ViewBag.Categories as List<ECommenceMVC.Entities.Models.Category>;
+    var selectedCategoryId = ViewContext.HttpContext.Request.Query["categoryId"].ToString();
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form method="get" asp-action="Index" asp-controller="Product" class="mb-3">
+    <select name="categoryId" class="form-select" onchange="this.form.submit()">
+        <option value="">Tüm Kategoriler</option>
+        @foreach (var category in categories)
+        {
+            if (category.CategoryID.ToString() == selectedCategoryId)
+            {
+                <option value="@category.CategoryID" selected="selected">@category.CategoryName</option>
+            }
+            else
+            {
+                <option value="@category.CategoryID">@category.CategoryName</option>
+            }
+        }
+    </select>
+</form>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Urun Kodu</th>
+            <th>Ürün Adı</th>
+            <th>Kategori</th>
+            <th>Birim Fiyatı</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductID</td>
+                <td>@item.ProductName</td>
+                <td>@item.CategoryName</td>
+                <td>@item.UnitPrice.ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>
