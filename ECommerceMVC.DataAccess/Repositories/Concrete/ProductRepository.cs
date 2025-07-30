@@ -37,7 +37,15 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
             using var connection = new SqlConnection(_connectionString);
             return connection.Query<Product>(
                 ProductSqlQueries.GetProductsByCategoryName,
-                new { CategoryName = categoryName }
+                new {
+                    @CategoryName = new DbString
+                    {
+                        Value = categoryName,
+                        IsFixedLength = false,
+                        Length = 20,
+                        IsAnsi = false
+                    },
+                }
                 ).ToList();
         }
     }

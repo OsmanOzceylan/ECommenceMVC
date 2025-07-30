@@ -20,7 +20,7 @@ namespace ECommerceMVC.Web.Controllers
             var categories = _categoryService.GetAllCategories();
             ViewBag.Categories = categories;
 
-            List<ProductResponse> products;
+            List<ProductResponseModel> products;
 
             if (categoryId.HasValue)
             {

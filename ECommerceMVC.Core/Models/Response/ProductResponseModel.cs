@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ECommerceMVC.Core.Models.Response
 {
-    public class ProductResponse
+    public class ProductResponseModel
     {
         public int ProductID { get; set; }
         public string ProductName { get; set; }

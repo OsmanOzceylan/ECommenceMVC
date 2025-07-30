@@ -38,8 +38,8 @@ namespace ECommerceMVC.DataAccess.Queries
          SELECT TOP 5 
          p.ProductID, p.ProductName, c.CategoryName, p.UnitPrice, SUM(od.Quantity) AS TotalSold
          FROM Products p
-         INNER JOIN Categories c ON p.CategoryID = c.CategoryID
-         INNER JOIN [Order Details] od ON p.ProductID = od.ProductID
+         JOIN Categories c ON p.CategoryID = c.CategoryID
+         JOIN [Order Details] od ON p.ProductID = od.ProductID
          GROUP BY p.ProductID, p.ProductName, c.CategoryName, p.UnitPrice
          ORDER BY TotalSold DESC";
 
