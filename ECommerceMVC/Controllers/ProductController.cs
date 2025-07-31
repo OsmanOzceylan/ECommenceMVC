@@ -1,6 +1,6 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
-using Microsoft.AspNetCore.Mvc;
 using ECommerceMVC.Core.Models.Response;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Web.Controllers
 {
@@ -15,24 +15,24 @@ namespace ECommerceMVC.Web.Controllers
             _categoryService = categoryService;
         }
 
-        public IActionResult Index(int? categoryId, string categoryName)
+        public async Task<IActionResult> Index(int? categoryId, string categoryName)
         {
-            var categories = _categoryService.GetAllCategories();
+            var categories = await _categoryService.GetAllCategoriesAsync();
             ViewBag.Categories = categories;
 
             List<ProductResponseModel> products;
 
             if (categoryId.HasValue)
             {
-                products = _productService.GetProductsByCategory(categoryId.Value);
+                products = await _productService.GetProductsByCategoryAsync(categoryId.Value);
             }
-            else if (!string.IsNullOrEmpty(categoryName)) 
+            else if (!string.IsNullOrEmpty(categoryName))
             {
-                products = _productService.GetProductsByCategoryName(categoryName);
+                products = await _productService.GetProductsByCategoryNameAsync(categoryName);
             }
             else
             {
-                products = _productService.GetAllProducts();
+                products = await _productService.GetAllProductsAsync();
             }
 
             return View(products);

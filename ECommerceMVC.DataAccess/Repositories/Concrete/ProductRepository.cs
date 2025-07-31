@@ -1,9 +1,9 @@
-﻿using ECommerceMVC.DataAccess.Queries;
+﻿using Dapper;
+using ECommerceMVC.DataAccess.Queries;
 using ECommerceMVC.DataAccess.Repositories.Abstract;
 using ECommerceMVC.Entities.Models;
-using System.Data.SqlClient;
-using Dapper;
 using Microsoft.Extensions.Configuration;
+using System.Data.SqlClient;
 
 namespace ECommerceMVC.DataAccess.Repositories.Concrete
 {
@@ -16,37 +16,31 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
 
-        public List<Product> GetAllProduct()
+        public async Task<List<Product>> GetAllProduct()
         {
             using var connection = new SqlConnection(_connectionString);
-            return connection.Query<Product>(ProductSqlQueries.GetAllProduct).ToList();
+            var products = await connection.QueryAsync<Product>(ProductSqlQueries.GetAllProduct);
+            return products.ToList();
         }
-        public List<Product> GetProductsByCategory(int categoryId)
+        public async Task<List<Product>> GetProductsByCategoryAsync(int categoryId)
         {
             using var connection = new SqlConnection(_connectionString);
-            return connection.Query<Product>(ProductSqlQueries.GetProductsByCategory, new { CategoryID = categoryId }).ToList();
+            var products = await connection.QueryAsync<Product>(ProductSqlQueries.GetProductsByCategory, new { CategoryID = categoryId });
+            return products.ToList();
         }
 
-        public List<Product> GetTop5BestSellingProducts()
+        public async Task<List<Product>> GetTop5BestSellingProductsAsync()
         {
             using var connection = new SqlConnection(_connectionString);
-            return connection.Query<Product>(ProductSqlQueries.GetTop5BestSellingProducts).ToList();
+            var products = await connection.QueryAsync<Product>(ProductSqlQueries.GetTop5BestSellingProducts);
+            return products.ToList();
         }
-        public List<Product> GetProductsByCategoryName(string categoryName) 
+        public async Task<List<Product>> GetProductsByCategoryNameAsync(string categoryName)
         {
             using var connection = new SqlConnection(_connectionString);
-            return connection.Query<Product>(
-                ProductSqlQueries.GetProductsByCategoryName,
-                new {
-                    @CategoryName = new DbString
-                    {
-                        Value = categoryName,
-                        IsFixedLength = false,
-                        Length = 20,
-                        IsAnsi = false
-                    },
-                }
-                ).ToList();
+            var products = await connection.QueryAsync<Product>(ProductSqlQueries.GetProductsByCategoryName, new { CategoryName = categoryName });
+            return products.ToList();
         }
     }
 }
+

@@ -7,20 +7,23 @@ using System.Data.SqlClient;
 
 namespace ECommerceMVC.DataAccess.Repositories.Concrete
 {
-    public class CategoryRepository : ICategoryRepository
+    public class UserRepository : IUserRepository
     {
         private readonly string _connectionString;
 
-        public CategoryRepository(IConfiguration configuration)
+        public UserRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
-
-        public async Task<List<Category>> GetAllCategoriesAsync()
+        public User? GetUserInformation(string userName, string password)
         {
             using var connection = new SqlConnection(_connectionString);
-            var categories = await connection.QueryAsync<Category>(CategorySqlQueries.GetAllCategories);
-            return categories.ToList();
+            var user = connection.QueryFirst<User>(
+                UserQueries.GetUserInfo,
+                new { UserName = new DbString { Value = userName, Length = 50, IsFixedLength = false , IsAnsi = false}, Password = password }
+            );
+            return user;
+
         }
     }
 }

@@ -1,12 +1,12 @@
 ﻿using ECommerceMVC.Entities.Models;
-using Dapper;
+
 namespace ECommerceMVC.DataAccess.Repositories.Abstract
 {
     public interface IProductRepository
     {
-        List<Product> GetAllProduct();
-        List<Product> GetProductsByCategory(int categoryId);
-        List<Product> GetTop5BestSellingProducts();
-        List<Product> GetProductsByCategoryName(string categoryName);
+        Task<List<Product>> GetAllProduct();
+        Task<List<Product>> GetProductsByCategoryAsync(int categoryId);
+        Task<List<Product>> GetTop5BestSellingProductsAsync();
+        Task<List<Product>> GetProductsByCategoryNameAsync(string categoryName);
     }
 }

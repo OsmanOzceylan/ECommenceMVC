@@ -13,9 +13,10 @@ namespace ECommerceMVC.Business.Services.Concrete
             _categoryRepository = categoryRepository;
         }
 
-        public List<Category> GetAllCategories()
+        public async Task<List<Category>> GetAllCategoriesAsync()
         {
-            return _categoryRepository.GetAllCategories(); 
+
+            return await _categoryRepository.GetAllCategoriesAsync();
         }
     }
 }

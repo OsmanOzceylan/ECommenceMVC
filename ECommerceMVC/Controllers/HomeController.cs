@@ -1,7 +1,5 @@
-﻿using ECommerceMVC.Models;
-using ECommerceMVC.Business.Services.Abstract;
-using ECommerceMVC.Business.Services.Concrete;
-using ECommerceMVC.Entities.Models;
+﻿using ECommerceMVC.Business.Services.Abstract;
+using ECommerceMVC.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -19,12 +17,16 @@ namespace silinecek.Controllers
             _productService = productService;
         }
 
-
-        public IActionResult Index()
+        public IActionResult Login()
         {
-            var topProducts = _productService.GetTop5BestSellingProducts();
+            return View();
+        }
+        public async Task<IActionResult> Index()
+        {
+            var topProducts = await _productService.GetTop5BestSellingProductsAsync();
             return View(topProducts);
         }
+
         public IActionResult Privacy()
         {
             return View();
