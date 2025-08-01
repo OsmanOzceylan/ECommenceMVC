@@ -6,6 +6,13 @@
     var selectedCategoryId = ViewContext.HttpContext.Request.Query["categoryId"].ToString();
     var selectedcategoryName = ViewContext.HttpContext.Request.Query["categoryName"].ToString();
 }
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
 
 <h2>@ViewData["Title"]</h2>
 
@@ -26,7 +33,6 @@
     </select>
 </form>
 
-
 <table class="table table-striped">
     <thead>
         <tr>
@@ -34,6 +40,7 @@
             <th>Ürün Adı</th>
             <th>Kategori</th>
             <th>Birim Fiyatı</th>
+            <th>İşlem</th> 
         </tr>
     </thead>
     <tbody>
@@ -44,6 +51,14 @@
                 <td>@item.ProductName</td>
                 <td>@item.CategoryName</td>
                 <td>@item.UnitPrice.ToString("C")</td>
+                <td>
+                    <form asp-action="AddToCart" asp-controller="Product" method="post">
+                        <input type="hidden" name="productId" value="@item.ProductID" />
+                        <input type="hidden" name="productName" value="@item.ProductName" />
+                        <input type="hidden" name="unitPrice" value="@item.UnitPrice" />
+                        <button type="submit" class="btn btn-sm btn-success">Sepete Ekle</button>
+                    </form>
+                </td>
             </tr>
         }
     </tbody>

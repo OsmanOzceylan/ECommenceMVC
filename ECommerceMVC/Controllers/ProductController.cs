@@ -1,6 +1,9 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
+using ECommerceMVC.Core.Models.Request;
 using ECommerceMVC.Core.Models.Response;
+using ECommerceMVC.Web.Helpers;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.DotNet.Scaffolding.Shared.Messaging;
 
 namespace ECommerceMVC.Web.Controllers
 {
@@ -37,5 +40,32 @@ namespace ECommerceMVC.Web.Controllers
 
             return View(products);
         }
+        [HttpPost]
+        public IActionResult AddToCart(int productId, string productName, decimal unitPrice)
+        {
+            var cartItems = CartHelper.GetCartItems(HttpContext);
+
+            var existingItem = cartItems.FirstOrDefault(x => x.ProductId == productId);
+
+            if (existingItem != null)
+            {
+                existingItem.Quantity++;
+            }
+            else
+            {
+                cartItems.Add(new CartItem
+                {
+                    ProductId = productId,
+                    ProductName = productName,
+                    Quantity = 1,
+                    UnitPrice = unitPrice
+                });
+            
+            }
+            CartHelper.SaveCartItems(HttpContext, cartItems);
+            TempData["SuccessMessage"] = $"{productName} sepete eklendi.";
+            return RedirectToAction("Index");
+        }
+
     }
 }

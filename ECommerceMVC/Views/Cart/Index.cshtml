@@ -1,0 +1,52 @@
+﻿@model List<ECommerceMVC.Core.Models.Request.CartItem>
+
+@{
+    ViewData["Title"] = "Sepetim";
+}
+
+<h2>Sepetim</h2>
+
+@if (Model.Count == 0)
+{
+    <p>Sepetinizde ürün bulunmamaktadır.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Ürün Adı</th>
+                <th>Adet</th>
+                <th>Birim Fiyat</th>
+                <th>Toplam</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.ProductName</td>
+                    <td>
+                        @item.Quantity
+                        <form method="post" asp-action="IncreaseQuantity" asp-controller="Cart" style="display:inline; margin-left:5px;">
+                            <input type="hidden" name="productId" value="@item.ProductId" />
+                            <button type="submit" class="btn btn-sm btn-success">+</button>
+                        </form>
+                        <form method="post" asp-action="DecreaseQuantity" asp-controller="Cart" style="display:inline; margin-left:3px;">
+                            <input type="hidden" name="productId" value="@item.ProductId" />
+                            <button type="submit" class="btn btn-sm btn-danger">-</button>
+                        </form>
+                    </td>
+                    <td>@item.UnitPrice.ToString("C")</td>
+                    <td>@((item.Quantity * item.UnitPrice).ToString("C2"))</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <p><strong>Toplam Tutar:</strong> @Model.Sum(x => x.Quantity * x.UnitPrice).ToString("C")</p>
+
+    <form asp-controller="Cart" asp-action="ClearCart" method="post">
+        <button type="submit" class="btn btn-danger">Sepeti Temizle</button>
+    </form>
+}

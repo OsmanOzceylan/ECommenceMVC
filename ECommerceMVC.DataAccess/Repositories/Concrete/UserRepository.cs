@@ -20,7 +20,7 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
             using var connection = new SqlConnection(_connectionString);
             var user = connection.QueryFirst<User>(
                 UserQueries.GetUserInfo,
-                new { UserName = new DbString { Value = userName, Length = 50, IsFixedLength = false , IsAnsi = false}, Password = password }
+                new { UserName = new DbString { Value = userName, Length = 50, IsFixedLength = false, IsAnsi = false }, Password = password }
             );
             return user;
 
