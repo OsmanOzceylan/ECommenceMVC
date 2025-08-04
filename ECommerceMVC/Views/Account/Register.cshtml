@@ -1,7 +1,7 @@
-﻿@model ECommerceMVC.Core.Models.Request.LoginRequestModel
+﻿@model ECommerceMVC.Core.Models.Request.RegisterRequest
 
 @{
-    ViewBag.Title = "Login";
+    ViewBag.Title = "Register";
     Layout = null;
 }
 
@@ -9,7 +9,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Login</title>
+    <title>Register</title>
     <style>
         body {
             background-color: #f7f7f7;
@@ -62,14 +62,13 @@
 </head>
 <body>
     <div class="login-box">
-        <h2>Sign in</h2>
+        <h2>Kayıt Ol</h2>
 
-        <form method="post" asp-action="Login" asp-controller="Account">
+        <form method="post" asp-action="Register">
             <input type="text" name="UserName" placeholder="Kullanıcı adı" required />
             <input type="password" name="Password" placeholder="Şifre" required />
-            <button type="submit">Giriş Yap</button>
-            <a asp-controller="Account" asp-action="Register">Kayıt ol</a>
-            <a href="#">Şifrenizi mi unuttunuz? </a>
+            <button type="submit">Kayıt Ol</button>
+            <a href="/Account/Login">Giriş Yap</a>
         </form>
     </div>
 </body>
