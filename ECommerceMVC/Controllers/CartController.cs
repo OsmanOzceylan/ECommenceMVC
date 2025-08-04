@@ -1,60 +1,63 @@
-﻿using ECommerceMVC.Core.Models.Request;
-using ECommerceMVC.Web.Helpers;
+﻿using ECommerceMVC.Business.Services.Abstract;
+using ECommerceMVC.Core.Models.Request;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Web.Controllers
 {
     public class CartController : Controller
     {
+        private readonly ICartService _cartService;
+
+        public CartController(ICartService cartService)
+        {
+            _cartService = cartService;
+        }
+
         public IActionResult Index()
         {
-            var cartItems = CartHelper.GetCartItems(HttpContext);
+            var cartItems = _cartService.GetCartItems();
             return View(cartItems);
         }
+
         [HttpPost]
         public IActionResult AddToCart(int productId, string productName, decimal unitPrice)
         {
-            var cartItems = CartHelper.GetCartItems(HttpContext);
+            var cartItems = _cartService.GetCartItems();
 
-            var existingItem = cartItems.FirstOrDefault(x => x.ProductId == productId);
-            if (existingItem != null)
+            var newItem = new CartItem
             {
-                existingItem.Quantity += 1;
-            }
-            else
-            {
-                cartItems.Add(new CartItem
-                {
-                    ProductId = productId,
-                    ProductName = productName,
-                    Quantity = 1,
-                    UnitPrice = unitPrice
-                });
-            }
+                ProductId = productId,
+                ProductName = productName,
+                Quantity = 1,
+                UnitPrice = unitPrice
+            };
 
-            CartHelper.SaveCartItems(HttpContext, cartItems);
+            _cartService.AddToCart(cartItems, newItem);
 
+            TempData["Message"] = $"{productName} sepete eklendi.";
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult IncreaseQuantity(int productId)
         {
-            CartHelper.IncreaseQuantity(HttpContext, productId);
-
+            var cartItems = _cartService.GetCartItems();
+            _cartService.IncreaseQuantity(cartItems, productId);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult DecreaseQuantity(int productId)
         {
-            CartHelper.DecreaseQuantity(HttpContext, productId);
-
+            var cartItems = _cartService.GetCartItems();
+            _cartService.DecreaseQuantity(cartItems, productId);
             return RedirectToAction("Index");
         }
+
+        [HttpPost]
         public IActionResult ClearCart()
         {
-            CartHelper.ClearCart(HttpContext);
+            _cartService.ClearCart();
             return RedirectToAction("Index");
         }
     }
