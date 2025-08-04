@@ -43,9 +43,7 @@ else
             }
         </tbody>
     </table>
-
     <p><strong>Toplam Tutar:</strong> @Model.Sum(x => x.Quantity * x.UnitPrice).ToString("C")</p>
-
     <form asp-controller="Cart" asp-action="ClearCart" method="post">
         <button type="submit" class="btn btn-danger">Sepeti Temizle</button>
     </form>

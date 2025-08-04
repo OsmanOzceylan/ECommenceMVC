@@ -1,6 +1,5 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
 using ECommerceMVC.Core.Models.Request;
-using ECommerceMVC.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.WebApp.Controllers
@@ -12,13 +11,11 @@ namespace ECommerceMVC.WebApp.Controllers
         {
             _userService = userService;
         }
-
         [HttpGet]
         public IActionResult Login()
         {
             return View();
         }
-
         [HttpPost]
         public IActionResult Login(LoginRequestModel model)
         {
@@ -32,7 +29,6 @@ namespace ECommerceMVC.WebApp.Controllers
             ViewBag.Error = "Invalid login.";
             return View(model);
         }
-
         [HttpGet]
         public IActionResult Register()
         {
@@ -44,24 +40,15 @@ namespace ECommerceMVC.WebApp.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            var existingUser = _userService.GetUserByUserName(model.UserName);
-            if (existingUser != null)
+            var success = _userService.RegisterUser(model);
+            if (!success)
             {
                 ModelState.AddModelError("", "Bu kullanıcı adı zaten kayıtlı.");
                 return View(model);
             }
 
-            var newUser = new User
-            {
-                UserName = model.UserName,
-                Password = model.Password // 
-            };
-
-            _userService.CreateUser(newUser);
-
             TempData["SuccessMessage"] = "Kayıt başarılı! Lütfen giriş yapınız.";
             return RedirectToAction("Login");
         }
-
     }
 }

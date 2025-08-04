@@ -10,12 +10,10 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
     public class CategoryRepository : ICategoryRepository
     {
         private readonly string _connectionString;
-
         public CategoryRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
-
         public async Task<List<Category>> GetAllCategoriesAsync()
         {
             using var connection = new SqlConnection(_connectionString);

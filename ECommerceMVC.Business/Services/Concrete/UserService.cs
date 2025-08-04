@@ -1,8 +1,8 @@
 ﻿using ECommerceMVC.Business.Helper;
 using ECommerceMVC.Business.Services.Abstract;
+using ECommerceMVC.Core.Models.Request;
 using ECommerceMVC.DataAccess.Repositories.Abstract;
 using ECommerceMVC.Entities.Models;
-
 
 namespace ECommerceMVC.Business.Services.Concrete
 {
@@ -26,6 +26,19 @@ namespace ECommerceMVC.Business.Services.Concrete
         public User? GetUserByUserName(string userName)
         {
             return _userRepository.GetUserByUserName(userName);
+        }
+        public bool RegisterUser(RegisterRequest model)
+        {
+            var existingUser = _userRepository.GetUserByUserName(model.UserName);
+            if (existingUser != null)
+                return false;
+            var newUser = new User
+            {
+                UserName = model.UserName,
+                Password = PasswordHelper.HashPassword(model.Password)
+            };
+            _userRepository.CreateUser(newUser);
+            return true;
         }
     }
 }

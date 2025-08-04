@@ -1,6 +1,5 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
-
 namespace ECommerceMVC.Business.Helper
 {
     public static class PasswordHelper

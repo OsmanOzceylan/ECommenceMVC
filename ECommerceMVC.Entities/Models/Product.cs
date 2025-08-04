@@ -1,6 +1,4 @@
-﻿
-
-namespace ECommerceMVC.Entities.Models
+﻿namespace ECommerceMVC.Entities.Models
 {
     public class Product
     {

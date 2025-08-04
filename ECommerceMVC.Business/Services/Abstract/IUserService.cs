@@ -1,4 +1,5 @@
-﻿using ECommerceMVC.Entities.Models;
+﻿using ECommerceMVC.Core.Models.Request;
+using ECommerceMVC.Entities.Models;
 
 namespace ECommerceMVC.Business.Services.Abstract
 {
@@ -7,5 +8,6 @@ namespace ECommerceMVC.Business.Services.Abstract
         User? GetUserInformation(string userName, string password);
         User? GetUserByUserName(string userName);
         void CreateUser(User user);
+        bool RegisterUser(RegisterRequest model);
     }
 }

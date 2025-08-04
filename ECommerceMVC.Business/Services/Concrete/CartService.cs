@@ -10,13 +10,11 @@ namespace ECommerceMVC.Business.Services.Concrete
         private const string CartSessionKey = "CartSession";
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly ISession _session;
-
         public CartService(IHttpContextAccessor httpContextAccessor)
         {
             _httpContextAccessor = httpContextAccessor;
             _session = _httpContextAccessor.HttpContext.Session;
         }
-
         public List<CartItem> GetCartItems()
         {
             var sessionData = _session.GetString(CartSessionKey);
@@ -25,35 +23,43 @@ namespace ECommerceMVC.Business.Services.Concrete
 
             return JsonConvert.DeserializeObject<List<CartItem>>(sessionData);
         }
-
         public void SaveCartItems(List<CartItem> cartItems)
         {
             var sessionData = JsonConvert.SerializeObject(cartItems);
             _session.SetString(CartSessionKey, sessionData);
         }
-
-        public List<CartItem> AddToCart(List<CartItem> cartItems, CartItem newItem)
+        public void AddToCart(int productId, string productName, decimal unitPrice)
         {
-            var existingItem = cartItems.FirstOrDefault(x => x.ProductId == newItem.ProductId);
+            var cartItems = GetCartItems();
+
+            var existingItem = cartItems.FirstOrDefault(x => x.ProductId == productId);
             if (existingItem != null)
-                existingItem.Quantity += newItem.Quantity;
+            {
+                existingItem.Quantity++;
+            }
             else
-                cartItems.Add(newItem);
+            {
+                cartItems.Add(new CartItem
+                {
+                    ProductId = productId,
+                    ProductName = productName,
+                    Quantity = 1,
+                    UnitPrice = unitPrice
+                });
+            }
 
             SaveCartItems(cartItems);
-            return cartItems;
         }
-
-        public List<CartItem> IncreaseQuantity(List<CartItem> cartItems, int productId)
+        public void IncreaseQuantity(int productId)
         {
+            var cartItems = GetCartItems();
             var item = cartItems.FirstOrDefault(x => x.ProductId == productId);
             if (item != null)
+            {
                 item.Quantity++;
-
-            SaveCartItems(cartItems);
-            return cartItems;
+                SaveCartItems(cartItems);
+            }
         }
-
         public List<CartItem> DecreaseQuantity(List<CartItem> cartItems, int productId)
         {
             var item = cartItems.FirstOrDefault(x => x.ProductId == productId);
@@ -67,7 +73,6 @@ namespace ECommerceMVC.Business.Services.Concrete
             SaveCartItems(cartItems);
             return cartItems;
         }
-
         public List<CartItem> ClearCart()
         {
             var emptyList = new List<CartItem>();

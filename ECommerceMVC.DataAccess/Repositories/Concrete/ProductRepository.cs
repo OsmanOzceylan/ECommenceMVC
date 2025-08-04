@@ -10,12 +10,10 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
     public class ProductRepository : IProductRepository
     {
         private readonly string _connectionString;
-
         public ProductRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
-
         public async Task<List<Product>> GetAllProduct()
         {
             using var connection = new SqlConnection(_connectionString);
@@ -28,7 +26,6 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
             var products = await connection.QueryAsync<Product>(ProductSqlQueries.GetProductsByCategory, new { CategoryID = categoryId });
             return products.ToList();
         }
-
         public async Task<List<Product>> GetTop5BestSellingProductsAsync()
         {
             using var connection = new SqlConnection(_connectionString);

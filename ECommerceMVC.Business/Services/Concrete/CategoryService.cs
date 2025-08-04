@@ -7,12 +7,10 @@ namespace ECommerceMVC.Business.Services.Concrete
     public class CategoryService : ICategoryService
     {
         private readonly ICategoryRepository _categoryRepository;
-
         public CategoryService(ICategoryRepository categoryRepository)
         {
             _categoryRepository = categoryRepository;
         }
-
         public async Task<List<Category>> GetAllCategoriesAsync()
         {
 

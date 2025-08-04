@@ -10,7 +10,6 @@ public class ProductService : IProductService
     {
         _productRepository = productRepository;
     }
-
     public async Task<List<ProductResponseModel>> GetAllProductsAsync()
     {
         var products = await _productRepository.GetAllProduct();
@@ -22,7 +21,6 @@ public class ProductService : IProductService
             UnitPrice = p.UnitPrice
         }).ToList();
     }
-
     public async Task<List<ProductResponseModel>> GetProductsByCategoryAsync(int categoryId)
     {
         var products = await _productRepository.GetProductsByCategoryAsync(categoryId);
@@ -34,7 +32,6 @@ public class ProductService : IProductService
             UnitPrice = p.UnitPrice
         }).ToList();
     }
-
     public async Task<List<ProductResponseModel>> GetProductsByCategoryNameAsync(string categoryName)
     {
         var products = await _productRepository.GetProductsByCategoryNameAsync(categoryName);
@@ -46,7 +43,6 @@ public class ProductService : IProductService
             UnitPrice = p.UnitPrice
         }).ToList();
     }
-
     public async Task<List<ProductResponseModel>> GetTop5BestSellingProductsAsync()
     {
         var products = await _productRepository.GetTop5BestSellingProductsAsync();
