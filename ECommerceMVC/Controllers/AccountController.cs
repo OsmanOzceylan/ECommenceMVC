@@ -37,7 +37,7 @@ namespace ECommerceMVC.WebApp.Controllers
         [HttpPost]
         public IActionResult Register(RegisterRequest model)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid) // kurallar için 
                 return View(model);
 
             var success = _userService.RegisterUser(model);

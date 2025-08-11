@@ -1,5 +1,6 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
 using ECommerceMVC.Core.Models.Response;
+using ECommerceMVC.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Web.Controllers
@@ -38,6 +39,22 @@ namespace ECommerceMVC.Web.Controllers
             _cartService.AddToCart(productId, productName, unitPrice);
             TempData["SuccessMessage"] = $"{productName} sepete eklendi.";
             return RedirectToAction("Index");
+        }
+        public IActionResult ImportProducts([FromBody] List<Product> products)
+        {
+            if (products == null || products.Count == 0)
+                return BadRequest("Gönderilen ürün listesi boş olamaz");
+            var result = _productService.BulkInsertProducts(products);
+            if (result)
+            {
+                TempData["SuccessMessage"] = "Ürünler başarıyla eklendi.";
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                TempData["ErrorMessage"] = "Ürünler eklenirken bir hata oluştu.";
+                return RedirectToAction("Index");
+            }
         }
     }
 }

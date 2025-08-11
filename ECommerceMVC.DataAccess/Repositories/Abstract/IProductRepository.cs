@@ -8,5 +8,6 @@ namespace ECommerceMVC.DataAccess.Repositories.Abstract
         Task<List<Product>> GetProductsByCategoryAsync(int categoryId);
         Task<List<Product>> GetTop5BestSellingProductsAsync();
         Task<List<Product>> GetProductsByCategoryNameAsync(string categoryName);
+        bool BulkInsertProducts(List<Product> products);
     }
 }

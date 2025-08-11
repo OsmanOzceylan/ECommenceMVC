@@ -5,20 +5,16 @@
         public const string GetAllProduct = "SELECT p.ProductID, p.ProductName, c.CategoryName, p.UnitPrice\r\n    FROM Products p\r\n    LEFT JOIN Categories c ON p.CategoryID = c.CategoryID";
         public const string AddProduct = @"
                        INSERT INTO Products
-                       (ProductID, ProductName, SupplierID, CategoryID, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued)
+                       (ProductID, ProductName, CategoryID, UnitPrice, UnitsInStock)
                        VALUES
-                       (@ProductID, @ProductName, @SupplierID, @CategoryID, @QuantityPerUnit, @UnitPrice, @UnitsInStock, @UnitsOnOrder, @ReorderLevel, @Discontinued)";
+                       (@ProductID, @ProductName, @CategoryID, @UnitPrice, @UnitsInStock)";
         public const string UpdateProduct = @"
                 UPDATE Products SET
                     ProductName = @ProductName,
                     SupplierID = @SupplierID,
                     CategoryID = @CategoryID,
-                    QuantityPerUnit = @QuantityPerUnit,
                     UnitPrice = @UnitPrice,
                     UnitsInStock = @UnitsInStock,
-                    UnitsOnOrder = @UnitsOnOrder,
-                    ReorderLevel = @ReorderLevel,
-                    Discontinued = @Discontinued
                 WHERE ProductID = @ProductID";
         public const string GetProductsByCategory = @"
          SELECT p.ProductID, p.ProductName, c.CategoryName, p.UnitPrice
@@ -42,5 +38,17 @@
          FROM Products p
          JOIN Categories c ON p.CategoryID = c.CategoryID
          WHERE c.CategoryName = @CategoryName";
+        public static string CreateTempProductTable = @"
+        CREATE TABLE #TempProducts (
+            ProductID INT,
+            ProductName NVARCHAR(50),
+            CategoryID INT,
+            UnitPrice DECIMAL(18, 2),
+            UnitsInStock INT
+        )";
+        public static string InsertTempProduct = @"
+        INSERT INTO #TempProducts (ProductID, ProductName, CategoryName, UnitPrice)
+        SELECT ProductID, ProductName, CategoryID, UnitPrice, UnitsInStock
+        FROM #TempProducts";
     }
 }

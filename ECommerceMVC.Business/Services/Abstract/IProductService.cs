@@ -1,4 +1,5 @@
 ﻿using ECommerceMVC.Core.Models.Response;
+using ECommerceMVC.Entities.Models;
 
 namespace ECommerceMVC.Business.Services.Abstract
 {
@@ -8,5 +9,6 @@ namespace ECommerceMVC.Business.Services.Abstract
         Task<List<ProductResponseModel>> GetProductsByCategoryAsync(int categoryId);
         Task<List<ProductResponseModel>> GetProductsByCategoryNameAsync(string categoryName);
         Task<List<ProductResponseModel>> GetTop5BestSellingProductsAsync();
+        bool BulkInsertProducts(List<Product> products);
     }
 }

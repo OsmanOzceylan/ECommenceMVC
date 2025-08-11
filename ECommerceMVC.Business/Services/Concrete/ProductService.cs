@@ -1,6 +1,7 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
 using ECommerceMVC.Core.Models.Response;
 using ECommerceMVC.DataAccess.Repositories.Abstract;
+using ECommerceMVC.Entities.Models;
 
 public class ProductService : IProductService
 {
@@ -53,5 +54,9 @@ public class ProductService : IProductService
             CategoryName = p.CategoryName,
             UnitPrice = p.UnitPrice
         }).ToList();
+    }
+    public bool BulkInsertProducts(List<Product> products)
+        {
+        return _productRepository.BulkInsertProducts(products);
     }
 }

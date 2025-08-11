@@ -25,7 +25,7 @@ namespace ECommerceMVC.Web.Controllers
         [HttpPost]
         public IActionResult IncreaseQuantity(int productId)
         {
-            _cartService.IncreaseQuantity(productId);  // Tüm iş servisin içinde
+            _cartService.IncreaseQuantity(productId);
             return RedirectToAction("Index");
         }
         [HttpPost]

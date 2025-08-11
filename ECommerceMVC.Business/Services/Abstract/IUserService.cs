@@ -7,7 +7,9 @@ namespace ECommerceMVC.Business.Services.Abstract
     {
         User? GetUserInformation(string userName, string password);
         User? GetUserByUserName(string userName);
-        void CreateUser(User user);
-        bool RegisterUser(RegisterRequest model);
+        void CreateUser(User user); //dönmeyeceği için 
+        bool RegisterUser(RegisterRequest model); // 1 ya da 0 döneceği için
+
+
     }
 }
