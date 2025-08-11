@@ -46,7 +46,7 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
 
             connection.Open();
             connection.Execute(ProductSqlQueries.CreateTempProductTable);
-            var productDT = ConvertToDataTable(products);
+            var productDT = new DataTable("#TempProducts");
             using (SqlBulkCopy sqlBulkCopy = new(connection))
             {
                 sqlBulkCopy.DestinationTableName = "#TempProducts";
@@ -58,30 +58,31 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
                     .ForEach(column => sqlBulkCopy.ColumnMappings.Add(column.ColumnName, column.ColumnName));   // her kolon için eşleştirme
                 sqlBulkCopy.WriteToServer(productDT);
                 return true;
-            }
-        }
 
-        private DataTable ConvertToDataTable<T>(List<T> items)
-        {
-            var dataTable = new DataTable(typeof(T).Name); //DataTable oluşturma, ve bunu T olarak isimlendirme
-            var props = typeof(T).GetProperties(); // T nin propertylerini alma
+                DataTable dt = new DataTable();
 
-            foreach (var prop in props) 
-            {
-                dataTable.Columns.Add(prop.Name, Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType); //Null çin kontrol etme ve DataTable'a kolon ekleme
-            }
+                //Sütun ekleme
+                dt.Columns.Add("ProductID", typeof(int));
+                dt.Columns.Add("ProductName", typeof(string));
+                dt.Columns.Add("CategoryID", typeof(int));
+                dt.Columns.Add("UnitPrice", typeof(decimal));
+                dt.Columns.Add("UnitsInStock", typeof(int));
 
-            foreach (var item in items) // her item için satır ekleme
-            {
-                var values = new object[props.Length];      //her kolon için değerleri tutacak bir dizi
-                for (int i = 0; i < props.Length; i++)
+                //for ile data table'a aktarma
+                for (int i = 0; i < products.Count; i++) 
                 {
-                    values[i] = props[i].GetValue(item, null);
-                }
-                dataTable.Rows.Add(values); // satırı dataTable'a ekleme
-            }
+                    DataRow row = dt.NewRow();
+                    row["ProductID"] = products[i].ProductID;
+                    row["ProductName"] = products[i].ProductName;
+                    row["CategoryID"] = products[i].CategoryID;
+                    row["UnitPrice"] = products[i].UnitPrice;
+                    row["UnitsInStock"] = products[i].UnitsInStock;
 
-            return dataTable;
+                    dt.Rows.Add(row);
+                }
+
+
+            }
         }
     }
 }
