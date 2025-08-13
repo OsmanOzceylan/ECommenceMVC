@@ -62,7 +62,7 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
                 DataTable dt = new DataTable();
 
                 //Sütun ekleme
-                dt.Columns.Add("ProductID", typeof(int));
+                dt.Columns.Add("ProductID", typeof(int)).AutoIncrement = true; //otomatik arttırma
                 dt.Columns.Add("ProductName", typeof(string));
                 dt.Columns.Add("CategoryID", typeof(int));
                 dt.Columns.Add("UnitPrice", typeof(decimal));
@@ -77,11 +77,8 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
                     row["CategoryID"] = products[i].CategoryID;
                     row["UnitPrice"] = products[i].UnitPrice;
                     row["UnitsInStock"] = products[i].UnitsInStock;
-
                     dt.Rows.Add(row);
                 }
-
-
             }
         }
     }
