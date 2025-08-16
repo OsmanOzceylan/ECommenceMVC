@@ -56,7 +56,17 @@ public class ProductService : IProductService
         }).ToList();
     }
     public bool BulkInsertProducts(List<Product> products)
+    {      var bulkInsertresult = _productRepository.BulkInsertProducts(products);
+
+        if (bulkInsertresult.Success)
         {
-        return _productRepository.BulkInsertProducts(products);
+         return bulkInsertresult.Data;
+        }
+        else 
+        {
+           Console.WriteLine(bulkInsertresult.Message);
+              return false;
+        }
+        
     }
 }

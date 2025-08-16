@@ -1,5 +1,6 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
 using ECommerceMVC.Core.Models.Request;
+using ECommerceMVC.Core.Utilities;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -28,27 +29,36 @@ namespace ECommerceMVC.Business.Services.Concrete
             var sessionData = JsonConvert.SerializeObject(cartItems);
             _session.SetString(CartSessionKey, sessionData);
         }
-        public void AddToCart(int productId, string productName, decimal unitPrice)
+        public Result<string> AddToCart(int productId, string productName, decimal unitPrice)
         {
-            var cartItems = GetCartItems();
+            try
+            {
+                var cartItems = GetCartItems();
 
-            var existingItem = cartItems.FirstOrDefault(x => x.ProductId == productId);
-            if (existingItem != null)
-            {
-                existingItem.Quantity++;
-            }
-            else
-            {
-                cartItems.Add(new CartItem
+                var existingItem = cartItems.FirstOrDefault(x => x.ProductId == productId);
+                if (existingItem != null)
                 {
-                    ProductId = productId,
-                    ProductName = productName,
-                    Quantity = 1,
-                    UnitPrice = unitPrice
-                });
+                    existingItem.Quantity++;
+                    SaveCartItems(cartItems);
+                    return Result<string>.Ok(null, $"{productName} adedi 1 arttırıldı.");
+                }
+                else
+                {
+                    cartItems.Add(new CartItem
+                    {
+                        ProductId = productId,
+                        ProductName = productName,
+                        Quantity = 1,
+                        UnitPrice = unitPrice
+                    });
+                    SaveCartItems(cartItems);
+                    return Result<string>.Ok(null, $"{productName} sepete eklendi.");
+                }
             }
-
-            SaveCartItems(cartItems);
+            catch (Exception ex)
+            {
+                return Result<string>.Fail("Sepete eklenirken bir hata oluştu: " + ex.Message);
+            }
         }
         public void IncreaseQuantity(int productId)
         {

@@ -1,4 +1,5 @@
-﻿using ECommerceMVC.Entities.Models;
+﻿using ECommerceMVC.Core.Utilities;
+using ECommerceMVC.Entities.Models;
 
 namespace ECommerceMVC.DataAccess.Repositories.Abstract
 {
@@ -8,6 +9,6 @@ namespace ECommerceMVC.DataAccess.Repositories.Abstract
         Task<List<Product>> GetProductsByCategoryAsync(int categoryId);
         Task<List<Product>> GetTop5BestSellingProductsAsync();
         Task<List<Product>> GetProductsByCategoryNameAsync(string categoryName);
-        bool BulkInsertProducts(List<Product> products);
+        Result<bool> BulkInsertProducts(List<Product> products);
     }
 }

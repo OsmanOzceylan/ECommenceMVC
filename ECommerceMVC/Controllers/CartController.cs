@@ -18,8 +18,13 @@ namespace ECommerceMVC.Web.Controllers
         [HttpPost]
         public IActionResult AddToCart(int productId, string productName, decimal unitPrice)
         {
-            _cartService.AddToCart(productId, productName, unitPrice);
-            TempData["Message"] = $"{productName} sepete eklendi.";
+            var result = _cartService.AddToCart(productId, productName, unitPrice);
+
+            if (result.Success)
+                TempData["Message"] = result.Message;
+            else
+                TempData["ErrorMessage"] = result.Message;
+
             return RedirectToAction("Index");
         }
         [HttpPost]

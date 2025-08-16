@@ -1,0 +1,38 @@
+﻿@model ECommerceMVC.Entities.Models.CustomerProfile
+
+@{
+    ViewData["Title"] = "Profil Bilgilerim";
+}
+
+<h2>Profil Bilgilerim</h2>
+
+@if (ViewBag.Success != null)
+{
+    <div class="alert alert-success">@ViewBag.Success</div>
+}
+
+<form asp-controller="CustomerProfile" asp-action="Profile" method="post" class="row g-3">
+    <div class="col-md-6">
+        <label class="form-label">Ad Soyad</label>
+        <input type="text" class="form-control" name="FullName" value="@Model?.FullName" />
+    </div>
+    <div class="col-md-6">
+        <label class="form-label">Adres</label>
+        <input type="text" class="form-control" name="Address" value="@Model?.Address" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Şehir</label>
+        <input type="text" class="form-control" name="City" value="@Model?.City" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Posta Kodu</label>
+        <input type="text" class="form-control" name="PostalCode" value="@Model?.PostalCode" />
+    </div>
+    <div class="col-md-4">
+        <label class="form-label">Telefon</label>
+        <input type="text" class="form-control" name="PhoneNumber" value="@Model?.PhoneNumber" />
+    </div>
+    <div class="col-12">
+        <button type="submit" class="btn btn-primary">Kaydet</button>
+    </div>
+</form>

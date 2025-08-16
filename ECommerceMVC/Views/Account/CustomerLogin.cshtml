@@ -1,7 +1,7 @@
-﻿@model ECommerceMVC.Core.Models.Request.RegisterRequest
+﻿@model ECommerceMVC.Core.Models.Request.CustomerLoginRequestModel
 
 @{
-    ViewBag.Title = "Register";
+    ViewBag.Title = "Customer Login";
     Layout = null;
 }
 
@@ -9,7 +9,7 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Register</title>
+    <title>Customer Login</title>
     <style>
         body {
             background-color: #f7f7f7;
@@ -43,7 +43,7 @@
             .login-box button {
                 width: 100%;
                 padding: 12px;
-                background-color: #4CAF50;
+                background-color: #2196F3;
                 border: none;
                 color: white;
                 border-radius: 5px;
@@ -62,14 +62,22 @@
 </head>
 <body>
     <div class="login-box">
-        <h2>Kayıt Ol</h2>
+        <h2>Müşteri Girişi</h2>
 
-        <form method="post" asp-action="Register"> 
-            <input type="text" name="UserName" placeholder="Kullanıcı adı" required />
-            <input type="password" name="Password" placeholder="Şifre" required />
-            <button type="submit">Kayıt Ol</button>
-            <a href="/Account/Login">Giriş Yap</a>
+        <form method="post" asp-action="CustomerLogin" asp-controller="Account">
+            @Html.AntiForgeryToken()
+            <input asp-for="CustomerName" placeholder="Müşteri Adı" />
+            <span asp-validation-for="CustomerName" class="text-danger"></span>
+
+            <input asp-for="CustomerPassword" type="password" placeholder="Şifre" />
+            <span asp-validation-for="CustomerPassword" class="text-danger"></span>
+
+            <button type="submit">Giriş Yap</button>
+
+            <a asp-controller="Account" asp-action="CustomerRegister">Kayıt Ol</a>
+            <a href="#">Şifrenizi mi unuttunuz?</a>
         </form>
+
     </div>
 </body>
 </html>

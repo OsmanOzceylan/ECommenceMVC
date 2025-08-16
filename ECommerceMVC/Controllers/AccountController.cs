@@ -1,54 +1,73 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
 using ECommerceMVC.Core.Models.Request;
+using ECommerceMVC.Core.Utilities; // Result<T> için
+using ECommerceMVC.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.WebApp.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly IUserService _userService;
-        public AccountController(IUserService userService)
+        private readonly ICustomerService _customerService;
+
+        public AccountController(ICustomerService customerService)
         {
-            _userService = userService;
+            _customerService = customerService;
         }
+
+        // --- Customer Login ---
         [HttpGet]
-        public IActionResult Login()
+        public IActionResult CustomerLogin()
         {
             return View();
         }
+
         [HttpPost]
-        public IActionResult Login(LoginRequestModel model)
+        public IActionResult CustomerLogin(CustomerLoginRequestModel model)
         {
-            var user = _userService.GetUserInformation(model.UserName, model.Password);
-            if (user != null)
+            if (!ModelState.IsValid)
+                return View(model);
+
+            Result<Customer> result = _customerService.GetCustomerInformation(model.CustomerName, model.CustomerPassword);
+
+            if (result.Success)
             {
-                HttpContext.Session.SetString("UserName", user.UserName);
+                HttpContext.Session.SetString("CustomerName", result.Data.CustomerName);
+                HttpContext.Session.SetInt32("CustomerID", result.Data.CustomerID);
                 return RedirectToAction("Index", "Home");
             }
 
-            ViewBag.Error = "Invalid login.";
+            ViewBag.Error = result.Message;
             return View(model);
         }
+
+        // --- Customer Register ---
         [HttpGet]
-        public IActionResult Register()
+        public IActionResult CustomerRegister()
         {
             return View();
         }
+
         [HttpPost]
-        public IActionResult Register(RegisterRequest model)
+        public IActionResult CustomerRegister(CustomerRegisterRequest model)
         {
-            if (!ModelState.IsValid) // kurallar için 
+            if (!ModelState.IsValid)
                 return View(model);
 
-            var success = _userService.RegisterUser(model);
-            if (!success)
-            {
-                ModelState.AddModelError("", "Bu kullanıcı adı zaten kayıtlı.");
-                return View(model);
-            }
+            Result<string> result = _customerService.RegisterCustomer(model);
 
-            TempData["SuccessMessage"] = "Kayıt başarılı! Lütfen giriş yapınız.";
-            return RedirectToAction("Login");
+            if (result.Success)
+                return RedirectToAction("CustomerLogin", "Account");
+
+            ViewBag.Error = result.Message;
+            return View(model);
+        }
+
+        // --- Customer Logout ---
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear();
+            return RedirectToAction("Index", "Home");
         }
     }
 }

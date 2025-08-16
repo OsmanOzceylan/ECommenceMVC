@@ -26,7 +26,7 @@
          p.ProductID, p.ProductName, c.CategoryName, p.UnitPrice, SUM(od.Quantity) AS TotalSold
          FROM Products p
          JOIN Categories c ON p.CategoryID = c.CategoryID
-         JOIN [Order Details] od ON p.ProductID = od.ProductID
+         JOIN [OrderDetails] od ON p.ProductID = od.ProductID
          GROUP BY p.ProductID, p.ProductName, c.CategoryName, p.UnitPrice
          ORDER BY TotalSold DESC";
         public static string GetProductsByCategoryName = @"
