@@ -1,6 +1,6 @@
 ﻿using ECommerceMVC.Core.Models.Request;
 using ECommerceMVC.Entities.Models;
-using ECommerceMVC.Core.Utilities; // Result<T> için
+using ECommerceMVC.Core.Utilities;
 
 namespace ECommerceMVC.Business.Services.Abstract
 {
@@ -9,6 +9,8 @@ namespace ECommerceMVC.Business.Services.Abstract
         Result<Customer> GetCustomerInformation(string customerName, string customerPassword);
         Result<Customer> GetCustomerByCustomerName(string customerName);
         Result<string> CreateCustomer(Customer customer);
+        Result<Customer> GetCustomerById(int customerId);
         Result<string> RegisterCustomer(CustomerRegisterRequest model);
+        Result<string> UpdateCustomer(Customer customer);
     }
 }

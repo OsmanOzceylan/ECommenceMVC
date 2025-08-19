@@ -3,7 +3,7 @@ using ECommerceMVC.Business.Services.Abstract;
 using ECommerceMVC.Core.Models.Request;
 using ECommerceMVC.DataAccess.Repositories.Abstract;
 using ECommerceMVC.Entities.Models;
-using ECommerceMVC.Core.Utilities; // Result<T> için
+using ECommerceMVC.Core.Utilities;
 
 namespace ECommerceMVC.Business.Services.Concrete
 {
@@ -15,6 +15,7 @@ namespace ECommerceMVC.Business.Services.Concrete
             _customerRepository = customerRepository;
         }
 
+        // Kullanıcı girişi doğrulama
         public Result<Customer> GetCustomerInformation(string customerName, string customerPassword)
         {
             var hashedPassword = PasswordHelper.HashPassword(customerPassword);
@@ -25,29 +26,44 @@ namespace ECommerceMVC.Business.Services.Concrete
 
             return Result<Customer>.Ok(result.Data, result.Message);
         }
-
-
-        public Result<string> CreateCustomer(Customer customer)
+        public Result<Customer> GetCustomerById(int customerId)  // yeni metot
         {
-            customer.CustomerPassword = PasswordHelper.HashPassword(customer.CustomerPassword);
-            _customerRepository.CreateCustomer(customer);
-            return Result<string>.Ok("Müşteri başarıyla oluşturuldu.");
-        }
+            var result = _customerRepository.GetCustomerById(customerId);
 
-        public Result<Customer> GetCustomerByCustomerName(string customerName)
-        {
-            var customer = _customerRepository.GetCustomerByCustomerName(customerName);
-            var result = _customerRepository.GetCustomerByCustomerName(customerName);
-
-            if (customer == null)
+            if (!result.Success || result.Data == null)
                 return Result<Customer>.Fail("Müşteri bulunamadı.");
+
             return Result<Customer>.Ok(result.Data, result.Message);
         }
 
+        // Müşteri oluşturma
+        public Result<string> CreateCustomer(Customer customer)
+        {
+            customer.CustomerPassword = PasswordHelper.HashPassword(customer.CustomerPassword);
+            var result = _customerRepository.CreateCustomer(customer);
+
+            if (!result.Success)
+                return Result<string>.Fail(result.Message);
+
+            return Result<string>.Ok("Müşteri başarıyla oluşturuldu.");
+        }
+
+        // CustomerName ile müşteri getir
+        public Result<Customer> GetCustomerByCustomerName(string customerName)
+        {
+            var result = _customerRepository.GetCustomerByCustomerName(customerName);
+
+            if (!result.Success || result.Data == null)
+                return Result<Customer>.Fail("Müşteri bulunamadı.");
+
+            return Result<Customer>.Ok(result.Data, result.Message);
+        }
+
+        // Register işlemi
         public Result<string> RegisterCustomer(CustomerRegisterRequest model)
         {
             var existingUser = _customerRepository.GetCustomerByCustomerName(model.CustomerName);
-            if (existingUser != null)
+            if (existingUser.Success && existingUser.Data != null)
                 return Result<string>.Fail("Bu kullanıcı adı zaten mevcut.");
 
             var newCustomer = new Customer
@@ -56,8 +72,28 @@ namespace ECommerceMVC.Business.Services.Concrete
                 CustomerPassword = PasswordHelper.HashPassword(model.CustomerPassword)
             };
 
-            _customerRepository.CreateCustomer(newCustomer);
+            var result = _customerRepository.CreateCustomer(newCustomer);
+            if (!result.Success)
+                return Result<string>.Fail(result.Message);
+
             return Result<string>.Ok("Kayıt işlemi başarıyla tamamlandı.");
+        }
+
+        public Result<string> UpdateCustomer(Customer customer)
+        {
+            var existingCustomer = _customerRepository.GetCustomerByCustomerName(customer.CustomerName);
+
+            if (!existingCustomer.Success || existingCustomer.Data == null)
+                return Result<string>.Fail("Güncellenecek müşteri bulunamadı.");
+
+            // Şifre değişmemişse mevcut şifreyi koru, değişmişse hashle
+            if (!string.IsNullOrEmpty(customer.CustomerPassword))
+                customer.CustomerPassword = PasswordHelper.HashPassword(customer.CustomerPassword);
+            else
+                customer.CustomerPassword = existingCustomer.Data.CustomerPassword;
+
+            _customerRepository.UpdateCustomer(customer); // repository’de bu metod olmalı
+            return Result<string>.Ok("Müşteri bilgileri başarıyla güncellendi.");
         }
     }
 }

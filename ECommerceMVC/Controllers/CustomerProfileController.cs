@@ -4,44 +4,40 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Web.Controllers
 {
-    [Route("Account/[action]")]
     public class CustomerProfileController : Controller
     {
-        private readonly ICustomerProfileService _profileService;
+        private readonly ICustomerService _customerService;
 
-        public CustomerProfileController(ICustomerProfileService profileService)
+        public CustomerProfileController(ICustomerService customerService)
         {
-            _profileService = profileService;
+            _customerService = customerService;
         }
 
         [HttpGet]
         public IActionResult Profile()
         {
-            int customerId = (int)HttpContext.Session.GetInt32("CustomerID");
-            var result = _profileService.GetProfileByCustomerId(customerId);
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("CustomerLogin", "Account");
 
-            if (!result.Success)
-            {
-                ViewBag.Error = result.Message;
-                return View();
-            }
-
-            return View(result.Data);
+            var result = _customerService.GetCustomerById(customerId.Value);
+            return View(result.Data ?? new Customer());
         }
 
         [HttpPost]
-        public IActionResult Profile(CustomerProfile model)
+        public IActionResult Profile(Customer model)
         {
-            model.CustomerId = (int)HttpContext.Session.GetInt32("CustomerID");
-            var result = _profileService.SaveProfile(model);
+            int? customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+                return RedirectToAction("CustomerLogin", "Account");
 
-            if (!result.Success)
-            {
-                ViewBag.Error = result.Message;
-                return View(model);
-            }
+            model.CustomerID = customerId.Value;
 
-            ViewBag.Success = result.Message;
+            var result = _customerService.UpdateCustomer(model);
+
+            ViewBag.Success = result.Success ? result.Message : null;
+            ViewBag.Error = !result.Success ? result.Message : null;
+
             return View(model);
         }
     }

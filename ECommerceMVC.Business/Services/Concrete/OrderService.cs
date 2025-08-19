@@ -43,9 +43,6 @@ namespace ECommerceMVC.Business.Services.Concrete
                 District = checkout.District,
                 PostalCode = checkout.PostalCode,
                 PhoneNumber = checkout.PhoneNumber,
-                CardNumber = checkout.CardNumber,
-                CardHolderName = checkout.CardHolderName,
-                CVV = checkout.CVV
             };
             await _orderRepository.CreateOrderInfoAsync(orderInfo);
             // Sepeti temizle

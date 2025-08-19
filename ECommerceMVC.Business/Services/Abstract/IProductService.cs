@@ -10,5 +10,6 @@ namespace ECommerceMVC.Business.Services.Abstract
         Task<List<ProductResponseModel>> GetProductsByCategoryNameAsync(string categoryName);
         Task<List<ProductResponseModel>> GetTop5BestSellingProductsAsync();
         bool BulkInsertProducts(List<Product> products);
+        Task<ProductResponseModel> GetProductByIdAsync(int productId);
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ECommerceMVC.Core.Models.Request
+﻿using System;
+
+namespace ECommerceMVC.Core.Models.Request
 {
     public class OrderRequest
     {
@@ -13,14 +15,6 @@
         {
             public int CustomerID { get; set; }
             public DateTime OrderDate { get; set; }
-        }
-
-        public class PayInfo
-        {
-            public string CardNumber { get; set; }
-            public string CardHolderName { get; set; }
-            public DateTime ExpirationDate { get; set; }
-            public string CVV { get; set; }
         }
 
         public class DeliveryInfo

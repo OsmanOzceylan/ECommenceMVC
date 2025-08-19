@@ -19,7 +19,8 @@ public class ProductService : IProductService
             ProductID = p.ProductID,
             ProductName = p.ProductName,
             CategoryName = p.CategoryName,
-            UnitPrice = p.UnitPrice
+            UnitPrice = p.UnitPrice,
+            ImageUrl = p.ImageUrl
         }).ToList();
     }
     public async Task<List<ProductResponseModel>> GetProductsByCategoryAsync(int categoryId)
@@ -30,7 +31,8 @@ public class ProductService : IProductService
             ProductID = p.ProductID,
             ProductName = p.ProductName,
             CategoryName = p.CategoryName,
-            UnitPrice = p.UnitPrice
+            UnitPrice = p.UnitPrice,
+            ImageUrl = p.ImageUrl
         }).ToList();
     }
     public async Task<List<ProductResponseModel>> GetProductsByCategoryNameAsync(string categoryName)
@@ -41,7 +43,8 @@ public class ProductService : IProductService
             ProductID = p.ProductID,
             ProductName = p.ProductName,
             CategoryName = p.CategoryName,
-            UnitPrice = p.UnitPrice
+            UnitPrice = p.UnitPrice,
+            ImageUrl = p.ImageUrl
         }).ToList();
     }
     public async Task<List<ProductResponseModel>> GetTop5BestSellingProductsAsync()
@@ -52,7 +55,8 @@ public class ProductService : IProductService
             ProductID = p.ProductID,
             ProductName = p.ProductName,
             CategoryName = p.CategoryName,
-            UnitPrice = p.UnitPrice
+            UnitPrice = p.UnitPrice,
+            ImageUrl = p.ImageUrl
         }).ToList();
     }
     public bool BulkInsertProducts(List<Product> products)
@@ -68,5 +72,9 @@ public class ProductService : IProductService
               return false;
         }
         
+    }
+    public async Task<ProductResponseModel> GetProductByIdAsync(int productId)
+    {
+        return await _productRepository.GetProductByIdAsync(productId);
     }
 }

@@ -10,16 +10,14 @@ namespace ECommerceMVC.Web.Controllers
     {
         private readonly IOrderService _orderService;
         private readonly ICartService _cartService;
-        private readonly ICustomerProfileService _profileService; 
+        private readonly ICustomerService _profileService; // <-- burayı değiştiriyoruz
 
-        public OrderController(IOrderService orderService, ICartService cartService,ICustomerProfileService profileService) 
+        public OrderController(IOrderService orderService, ICartService cartService, ICustomerService profileService)
         {
             _orderService = orderService;
             _cartService = cartService;
             _profileService = profileService;
         }
-
-        [HttpGet]
 
         [HttpGet]
         public IActionResult Checkout()
@@ -29,22 +27,23 @@ namespace ECommerceMVC.Web.Controllers
 
             if (customerId != null)
             {
-                var profileResult = _profileService.GetProfileByCustomerId(customerId.Value);
+                var profileResult = _profileService.GetCustomerById(customerId.Value);
                 if (profileResult.Success)
                 {
                     // CheckoutRequest ile CustomerProfile eşleştir
-                    model.FirstName = profileResult.Data.FullName;
-                    model.LastName = profileResult.Data.FullName;
+                    model.FirstName = profileResult.Data.CustomerName;
+                    model.LastName = profileResult.Data.CustomerLastName;
+                    model.Email = profileResult.Data.Email;
                     model.Address = profileResult.Data.Address;
                     model.City = profileResult.Data.City;
+                    model.Country = profileResult.Data.Country;
                     model.PostalCode = profileResult.Data.PostalCode;
-                    model.PhoneNumber = profileResult.Data.PhoneNumber;
+                    model.PhoneNumber = profileResult.Data.Phone;
                 }
             }
 
             return View(model);
         }
-
 
         [HttpPost]
         public async Task<IActionResult> Checkout(CheckoutRequest model)
@@ -62,7 +61,6 @@ namespace ECommerceMVC.Web.Controllers
                 return RedirectToAction("Index", "Cart");
             }
 
-            // Giriş yapan kullanıcının ID'sini session'dan al
             int? customerId = HttpContext.Session.GetInt32("CustomerID");
             if (customerId == null)
             {
@@ -72,7 +70,7 @@ namespace ECommerceMVC.Web.Controllers
 
             var order = new Order
             {
-                CustomerID = customerId.Value, 
+                CustomerID = customerId.Value,
                 OrderDate = DateTime.Now
             };
 
@@ -80,7 +78,6 @@ namespace ECommerceMVC.Web.Controllers
 
             TempData["SuccessMessage"] = $"Siparişiniz başarıyla oluşturuldu. Sipariş ID: {orderId}";
             return RedirectToAction("Index", "Product");
-
         }
     }
 }

@@ -29,7 +29,7 @@ namespace ECommerceMVC.Business.Services.Concrete
             var sessionData = JsonConvert.SerializeObject(cartItems);
             _session.SetString(CartSessionKey, sessionData);
         }
-        public Result<string> AddToCart(int productId, string productName, decimal unitPrice)
+        public Result<string> AddToCart(int productId, string productName, decimal unitPrice, string? imageUrl)
         {
             try
             {
@@ -49,7 +49,8 @@ namespace ECommerceMVC.Business.Services.Concrete
                         ProductId = productId,
                         ProductName = productName,
                         Quantity = 1,
-                        UnitPrice = unitPrice
+                        UnitPrice = unitPrice,
+                        ImageUrl = imageUrl
                     });
                     SaveCartItems(cartItems);
                     return Result<string>.Ok(null, $"{productName} sepete eklendi.");

@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using ECommerceMVC.Core.Models.Response;
 using ECommerceMVC.Core.Utilities;
 using ECommerceMVC.DataAccess.Queries;
 using ECommerceMVC.DataAccess.Repositories.Abstract;
@@ -40,7 +41,7 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
             var products = await connection.QueryAsync<Product>(ProductSqlQueries.GetProductsByCategoryName, new { CategoryName = categoryName });
             return products.ToList();
         }
-        public Result<bool> BulkInsertProducts(List<Product> products) 
+        public Result<bool> BulkInsertProducts(List<Product> products)
         {
             using var connection = new SqlConnection(_connectionString);
 
@@ -54,6 +55,7 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
             dt.Columns.Add("CategoryID", typeof(int));
             dt.Columns.Add("UnitPrice", typeof(decimal));
             dt.Columns.Add("UnitsInStock", typeof(int));
+            dt.Columns.Add("ImageUrl", typeof(string));
 
 
 
@@ -66,6 +68,7 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
                 row["CategoryID"] = products[i].CategoryID;
                 row["UnitPrice"] = products[i].UnitPrice;
                 row["UnitsInStock"] = products[i].UnitsInStock;
+                row["ImageUrl"] = products[i].ImageUrl;
                 dt.Rows.Add(row);
                 using (SqlBulkCopy sqlBulkCopy = new(connection))
                 {
@@ -83,9 +86,28 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
                 Success = true,
                 Message = "Ürünler başarıyla eklendi.",
                 Data = true
-            }
-            ;
+            };
         }
+        public async Task<ProductResponseModel> GetProductByIdAsync(int productId)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            var product = await connection.QueryFirstOrDefaultAsync<Product>(
+                ProductSqlQueries.GetProductById, new { ProductID = productId });
+
+            if (product == null) return null;
+
+            return new ProductResponseModel
+            {
+                ProductID = product.ProductID,
+                ProductName = product.ProductName,
+                CategoryName = product.CategoryName,
+                UnitPrice = product.UnitPrice,
+                ImageUrl = product.ImageUrl,
+                Quantity = 1,       
+                TotalSold = product.TotalSold
+            };
+        }
+
     }
 }
 

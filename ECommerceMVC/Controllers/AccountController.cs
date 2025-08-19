@@ -1,10 +1,9 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
 using ECommerceMVC.Core.Models.Request;
-using ECommerceMVC.Core.Utilities; // Result<T> için
 using ECommerceMVC.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 
-namespace ECommerceMVC.WebApp.Controllers
+namespace ECommerceMVC.Web.Controllers
 {
     public class AccountController : Controller
     {
@@ -17,18 +16,15 @@ namespace ECommerceMVC.WebApp.Controllers
 
         // --- Customer Login ---
         [HttpGet]
-        public IActionResult CustomerLogin()
-        {
-            return View();
-        }
+        public IActionResult CustomerLogin() => View();
 
         [HttpPost]
         public IActionResult CustomerLogin(CustomerLoginRequestModel model)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid) //veri doğruluğunu kontrol eder
                 return View(model);
 
-            Result<Customer> result = _customerService.GetCustomerInformation(model.CustomerName, model.CustomerPassword);
+            var result = _customerService.GetCustomerInformation(model.CustomerName, model.CustomerPassword);
 
             if (result.Success)
             {
@@ -43,10 +39,7 @@ namespace ECommerceMVC.WebApp.Controllers
 
         // --- Customer Register ---
         [HttpGet]
-        public IActionResult CustomerRegister()
-        {
-            return View();
-        }
+        public IActionResult CustomerRegister() => View();
 
         [HttpPost]
         public IActionResult CustomerRegister(CustomerRegisterRequest model)
@@ -54,10 +47,10 @@ namespace ECommerceMVC.WebApp.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
-            Result<string> result = _customerService.RegisterCustomer(model);
+            var result = _customerService.RegisterCustomer(model);
 
             if (result.Success)
-                return RedirectToAction("CustomerLogin", "Account");
+                return RedirectToAction("CustomerLogin");
 
             ViewBag.Error = result.Message;
             return View(model);

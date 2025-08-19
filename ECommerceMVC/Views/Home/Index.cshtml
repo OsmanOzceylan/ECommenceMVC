@@ -1,33 +1,38 @@
-﻿@model List<ECommerceMVC.Core.Models.Response.ProductResponseModel>
+﻿@model ECommerceMVC.Core.Models.Response.HomeIndexViewModel
+@using System.Text.Json;
 
 @{
-    ViewData["Title"] = "Ana Sayfa";
+    var favoriteProducts = new List<ECommerceMVC.Core.Models.Response.ProductResponseModel>();
+    var favoriteCookie = Context.Request.Cookies["FavoriteProducts"];
+    if (!string.IsNullOrEmpty(favoriteCookie))
+    {
+        favoriteProducts = JsonSerializer.Deserialize<List<ECommerceMVC.Core.Models.Response.ProductResponseModel>>(favoriteCookie);
+    }
 }
 
-<div class="text-center">
-    <h1 class="display-4">Hoşgeldiniz.</h1>
+<h4>Top 5 Satılan Ürünler</h4>
+<div class="row mb-4">
+    @foreach (var product in Model.TopSellingProducts)
+    {
+        @await Html.PartialAsync("_ProductCard", product)
+    }
 </div>
 
-<h2 class="mt-4">En Çok Satılan 5 Ürün</h2>
-
-<table class="table table-striped mt-3">
-    <thead>
-        <tr>
-            <th>Ürün Kodu</th>
-            <th>Ürün Adı</th>
-            <th>Kategori</th>
-            <th>Birim Fiyatı</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+@if (favoriteProducts.Any())
+{
+    <h4>Favori Ürünleriniz</h4>
+    <div class="row mb-4">
+        @foreach (var product in favoriteProducts)
         {
-            <tr>
-                <td>@item.ProductID</td>
-                <td>@item.ProductName</td>
-                <td>@item.CategoryName</td>
-                <td>@item.UnitPrice.ToString("C")</td>
-            </tr>
+            @await Html.PartialAsync("_ProductCard", product)
         }
-    </tbody>
-</table>
+    </div>
+}
+
+<h4>Tüm Ürünler</h4>
+<div class="row">
+    @foreach (var product in Model.AllProducts)
+    {
+        @await Html.PartialAsync("_ProductCard", product)
+    }
+</div>

@@ -7,7 +7,7 @@ namespace ECommerceMVC.Business.Services.Abstract
     {
         List<CartItem> GetCartItems();
         void SaveCartItems(List<CartItem> cartItems);
-        Result<string> AddToCart(int productId, string productName, decimal unitPrice);
+        Result<string> AddToCart(int productId, string productName, decimal unitPrice, string imageUrl);
 
         void IncreaseQuantity(int productId);
         List<CartItem> DecreaseQuantity(List<CartItem> cartItems, int productId);

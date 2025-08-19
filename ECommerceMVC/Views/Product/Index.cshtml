@@ -4,15 +4,14 @@
     ViewData["Title"] = "Ürünler";
     var categories = ViewBag.Categories as List<ECommerceMVC.Entities.Models.Category>;
     var selectedCategoryId = ViewContext.HttpContext.Request.Query["categoryId"].ToString();
-    var selectedcategoryName = ViewContext.HttpContext.Request.Query["categoryName"].ToString();
 }
+
 @if (TempData["SuccessMessage"] != null)
 {
     <div class="alert alert-success">
         @TempData["SuccessMessage"]
     </div>
 }
-
 
 <h2>@ViewData["Title"]</h2>
 
@@ -23,7 +22,7 @@
         {
             if (category.CategoryID.ToString() == selectedCategoryId)
             {
-                <option value="@category.CategoryID" selected="selected">@category.CategoryName</option>
+                <option value="@category.CategoryID" selected>@category.CategoryName</option>
             }
             else
             {
@@ -33,33 +32,39 @@
     </select>
 </form>
 
-<table class="table table-striped">
-    <thead>
-        <tr>
-            <th>Urun Kodu</th>
-            <th>Ürün Adı</th>
-            <th>Kategori</th>
-            <th>Birim Fiyatı</th>
-            <th>İşlem</th> 
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@item.ProductID</td>
-                <td>@item.ProductName</td>
-                <td>@item.CategoryName</td>
-                <td>@item.UnitPrice.ToString("C")</td>
-                <td>
-                    <form asp-action="AddToCart" asp-controller="Product" method="post">
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-sm-6 col-md-4 col-lg-3 mb-4">
+            <div class="card h-100">
+                <a asp-controller="Product" asp-action="Details" asp-route-productId="@item.ProductID">
+                    <img src="@(item.ImageUrl ?? "/images/default.png")" class="card-img-top" alt="@item.ProductName" style="height:200px; object-fit:cover;">
+                </a>
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">@item.ProductName</h5>
+                    <p class="card-text">Kategori: @item.CategoryName</p>
+                    <p class="card-text">Fiyat: @item.UnitPrice.ToString("C")</p>
+
+                    <form asp-action="AddToCart" asp-controller="Product" method="post" class="mt-auto">
                         <input type="hidden" name="productId" value="@item.ProductID" />
                         <input type="hidden" name="productName" value="@item.ProductName" />
                         <input type="hidden" name="unitPrice" value="@item.UnitPrice" />
-                        <button type="submit" class="btn btn-sm btn-success">Sepete Ekle</button>
+                        <input type="hidden" name="imageUrl" value="@item.ImageUrl" />
+                        <button type="submit" class="btn btn-success w-100">Sepete Ekle</button>
                     </form>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+
+                    <form asp-action="AddToFavorites" asp-controller="Favorite" method="post" class="mt-2">
+                        <input type="hidden" name="ProductId" value="@item.ProductID" />
+                        <input type="hidden" name="ProductName" value="@item.ProductName" />
+                        <input type="hidden" name="UnitPrice" value="@item.UnitPrice" />
+                        <input type="hidden" name="ImageUrl" value="@item.ImageUrl" />
+                        <button type="submit" class="btn btn-outline-danger w-100">
+                            <i class="bi bi-heart"></i> Favorilere Ekle
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    }
+</div>

@@ -11,54 +11,97 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
     public class CustomerRepository : ICustomerRepository
     {
         private readonly string _connectionString;
+
         public CustomerRepository(IConfiguration configuration)
         {
             _connectionString = configuration.GetConnectionString("DefaultConnection");
         }
+
         public Result<Customer> GetCustomerByCustomerName(string customerName)
         {
             using var connection = new SqlConnection(_connectionString);
-            var customer = connection.QueryFirstOrDefault<Customer>(CustomerQueries.GetCustomerByCustomerName,
-                new { CustomerName = new DbString { Value = customerName, Length = 50, IsFixedLength = false, IsAnsi = false } }
-        );
-            if (customer != null)
-            {
-                return Result<Customer>.Ok(customer, "Müşteri Bulundu.");
-            }
+            var customer = connection.QueryFirstOrDefault<Customer>(
+                CustomerQueries.GetCustomerByCustomerName,
+                new { CustomerName = customerName }
+            );
 
-            return Result<Customer>.Fail("Müşteri Bulunamadı.");
+            if (customer != null)
+                return Result<Customer>.Ok(customer, "Müşteri bulundu.");
+            return Result<Customer>.Fail("Müşteri bulunamadı.");
         }
+
         public Result<Customer> GetCustomerInformation(string customerName, string customerPassword)
         {
             using var connection = new SqlConnection(_connectionString);
             var customer = connection.QueryFirstOrDefault<Customer>(
                 CustomerQueries.GetCustomerInfo,
-                new { CustomerName = new DbString { Value = customerName, Length = 50, IsFixedLength = false, IsAnsi = false }, CustomerPassword = customerPassword }
+                new { CustomerName = customerName, CustomerPassword = customerPassword }
             );
+
             if (customer != null)
-            {
                 return Result<Customer>.Ok(customer, "Müşteri bilgileri doğru.");
-            }
-            else
-            {
-                return Result<Customer>.Fail("Kullanıcı adı veya şifreniz hatalı.");
-            }
+            return Result<Customer>.Fail("Kullanıcı adı veya şifre hatalı.");
         }
+
         public Result<string> CreateCustomer(Customer customer)
         {
             using var connection = new SqlConnection(_connectionString);
-            int rowsAffected = connection.Execute(CustomerQueries.CreateCustomer,
-            new { CustomerName = new DbString { Value = customer.CustomerName, Length = 50, IsFixedLength = false, IsAnsi = false }, CustomerPassword = customer.CustomerPassword }
-        );
+            int rowsAffected = connection.Execute(
+                CustomerQueries.CreateCustomer,
+                new
+                {
+                    CustomerName = customer.CustomerName,
+                    CustomerPassword = customer.CustomerPassword,
+                    CustomerLastName = customer.CustomerLastName,
+                    Email = customer.Email,
+                    Address = customer.Address,
+                    City = customer.City,
+                    PostalCode = customer.PostalCode,
+                    Country = customer.Country,
+                    Phone = customer.Phone
+                }
+            );
+
             if (rowsAffected > 0)
-            {
                 return Result<string>.Ok("Müşteri başarıyla oluşturuldu.");
-            }
-            else
-            {
-                return Result<string>.Fail("Müşteri oluşturulamadı.");
-            }
+            return Result<string>.Fail("Müşteri oluşturulamadı.");
+        }
+
+        public Result<Customer> GetCustomerById(int customerId)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            var customer = connection.QueryFirstOrDefault<Customer>(
+                CustomerQueries.GetCustomerByCustomerID,
+                new { CustomerID = customerId }
+            );
+
+            if (customer != null)
+                return Result<Customer>.Ok(customer, "Müşteri bulundu.");
+            return Result<Customer>.Fail("Müşteri bulunamadı.");
+        }
+
+        public Result<string> UpdateCustomer(Customer customer)
+        {
+            using var connection = new SqlConnection(_connectionString);
+            int rowsAffected = connection.Execute(
+                CustomerQueries.UpdateCustomer,
+                new
+                {
+                    CustomerID = customer.CustomerID,
+                    CustomerName = customer.CustomerName,
+                    CustomerLastName = customer.CustomerLastName,
+                    Email = customer.Email,
+                    Address = customer.Address,
+                    City = customer.City,
+                    PostalCode = customer.PostalCode,
+                    Country = customer.Country,
+                    Phone = customer.Phone
+                }
+            );
+
+            if (rowsAffected > 0)
+                return Result<string>.Ok("Müşteri bilgileri güncellendi.");
+            return Result<string>.Fail("Müşteri bilgileri güncellenemedi.");
         }
     }
 }
-
