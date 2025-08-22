@@ -8,13 +8,16 @@
 
   <ItemGroup>
     <PackageReference Include="Dapper" Version="2.1.66" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Session" Version="2.3.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.7" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="System.Data.SqlClient" Version="4.9.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ECommerceMVC.Business\ECommerceMVC.Business.csproj" />
-    <ProjectReference Include="..\ECommerceMVC.Core\ECommerceMVC.Core.csproj" />
     <ProjectReference Include="..\ECommerceMVC.Entities\ECommerceMVC.Entities.csproj" />
   </ItemGroup>
 
