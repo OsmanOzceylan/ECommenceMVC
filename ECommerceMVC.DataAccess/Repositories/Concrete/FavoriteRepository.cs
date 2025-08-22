@@ -1,11 +1,9 @@
 ﻿using Dapper;
-using System.Data.SqlClient;
-using ECommerceMVC.Entities.Models;
 using ECommerceMVC.DataAccess.Queries;
 using ECommerceMVC.DataAccess.Repositories.Abstract;
+using ECommerceMVC.Entities.Models;
 using Microsoft.Extensions.Configuration;
-using System.Linq;
-using System.Collections.Generic;
+using System.Data.SqlClient;
 
 namespace ECommerceMVC.DataAccess.Repositories.Concrete
 {

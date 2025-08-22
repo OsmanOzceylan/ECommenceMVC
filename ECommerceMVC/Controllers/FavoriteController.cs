@@ -1,7 +1,5 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
-using ECommerceMVC.Core.Models.Response;
 using Microsoft.AspNetCore.Mvc;
-using System.Linq;
 
 namespace ECommerceMVC.Web.Controllers
 {
@@ -39,10 +37,25 @@ namespace ECommerceMVC.Web.Controllers
                 return RedirectToAction("CustomerLogin", "Account");
             }
 
-            _favoriteService.AddToFavorites(customerId.Value, productId);
-            TempData["SuccessMessage"] = "Ürün favorilere eklendi.";
-            return RedirectToAction("Index");
+            // Ürün zaten favoride mi kontrol et
+            var favorites = _favoriteService.GetFavoritesByCustomer(customerId.Value);
+            var existing = favorites.FirstOrDefault(f => f.ProductID == productId);
+
+            if (existing != null)
+            {
+                _favoriteService.RemoveFromFavorites(customerId.Value, productId);
+                TempData["SuccessMessage"] = "Ürün favorilerden çıkarıldı.";
+            }
+            else
+            {
+                _favoriteService.AddToFavorites(customerId.Value, productId);
+                TempData["SuccessMessage"] = "Ürün favorilere eklendi.";
+            }
+
+            // Detay sayfasına geri dön
+            return Redirect(Request.Headers["Referer"].ToString());
         }
+
 
         // Favoriden kaldır
         [HttpPost]
@@ -54,7 +67,8 @@ namespace ECommerceMVC.Web.Controllers
                 _favoriteService.RemoveFromFavorites(customerId.Value, productId);
                 TempData["SuccessMessage"] = "Ürün favorilerden silindi.";
             }
-            return RedirectToAction("Index");
+
+            return Redirect(Request.Headers["Referer"].ToString());
         }
 
         // Tüm favorileri temizle
@@ -67,7 +81,40 @@ namespace ECommerceMVC.Web.Controllers
                 _favoriteService.ClearFavorites(customerId.Value);
                 TempData["SuccessMessage"] = "Tüm favoriler temizlendi.";
             }
-            return RedirectToAction("Index");
+
+            return Redirect(Request.Headers["Referer"].ToString());
         }
+        [HttpPost]
+        public IActionResult ToggleFavorite(int productId)
+        {
+            var customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
+            {
+                TempData["ErrorMessage"] = "Favorilere eklemek için giriş yapmalısınız.";
+                return RedirectToAction("CustomerLogin", "Account");
+            }
+
+           
+            var favorites = _favoriteService.GetFavoritesByCustomer(customerId.Value);
+            var existing = favorites.FirstOrDefault(f => f.ProductID == productId);
+
+            if (existing != null)
+            {
+                
+                _favoriteService.RemoveFromFavorites(customerId.Value, productId);
+                TempData["SuccessMessage"] = "Ürün favorilerden çıkarıldı.";
+            }
+            else
+            {
+               
+                _favoriteService.AddToFavorites(customerId.Value, productId);
+                TempData["SuccessMessage"] = "Ürün favorilere eklendi.";
+            }
+            var referer = Request.Headers["Referer"].ToString();
+            return !string.IsNullOrEmpty(referer) ? Redirect(referer) : RedirectToAction("Index", "Product");
+        }
+
     }
+
 }
+

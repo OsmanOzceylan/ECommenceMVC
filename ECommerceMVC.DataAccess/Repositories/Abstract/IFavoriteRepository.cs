@@ -1,5 +1,4 @@
 ﻿using ECommerceMVC.Entities.Models;
-using System.Collections.Generic;
 
 namespace ECommerceMVC.DataAccess.Repositories.Abstract
 {

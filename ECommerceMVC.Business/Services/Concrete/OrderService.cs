@@ -9,18 +9,58 @@ namespace ECommerceMVC.Business.Services.Concrete
     {
         private readonly IOrderRepository _orderRepository;
         private readonly ICartService _cartService;
+        private readonly ICustomerService _customerService;
 
-        public OrderService(IOrderRepository orderRepository, ICartService cartService)
+        public OrderService(
+            IOrderRepository orderRepository,
+            ICartService cartService,
+            ICustomerService customerService)
         {
             _orderRepository = orderRepository;
             _cartService = cartService;
+            _customerService = customerService;
         }
 
-        public async Task<int> CreateOrderAsync(Order order, List<CartItem> cartItems, CheckoutRequest checkout)
-        {     // Siparişi oluştur
+        public async Task<CheckoutRequest> GetCheckoutRequestAsync(int? customerId)
+        {
+            var model = new CheckoutRequest();
+
+            if (customerId.HasValue)
+            {
+                var profileResult = _customerService.GetCustomerById(customerId.Value);
+                if (profileResult.Success)
+                {
+                    model.FirstName = profileResult.Data.CustomerName;
+                    model.LastName = profileResult.Data.CustomerLastName;
+                    model.Email = profileResult.Data.Email;
+                    model.Address = profileResult.Data.Address;
+                    model.City = profileResult.Data.City;
+                    model.Country = profileResult.Data.Country;
+                    model.PostalCode = profileResult.Data.PostalCode;
+                    model.PhoneNumber = profileResult.Data.Phone;
+                }
+            }
+
+            return model;
+        }
+
+        public async Task<(bool Success, string Message)> ProcessCheckoutAsync(int? customerId, CheckoutRequest model)
+        {
+            if (!customerId.HasValue)
+                return (false, "Lütfen önce giriş yapın.");
+
+            var cartItems = _cartService.GetCartItems();
+            if (cartItems.Count == 0)
+                return (false, "Sepetiniz boş, önce ürün ekleyin.");
+
+            var order = new Order
+            {
+                CustomerID = customerId.Value,
+                OrderDate = DateTime.Now
+            };
+
             var orderId = await _orderRepository.CreateOrderAsync(order);
 
-            // Sipariş detaylarını oluştur
             foreach (var item in cartItems)
             {
                 var orderDetail = new OrderDetail
@@ -32,23 +72,24 @@ namespace ECommerceMVC.Business.Services.Concrete
                 };
                 await _orderRepository.CreateOrderDetailAsync(orderDetail);
             }
+
             var orderInfo = new OrderInfo
             {
                 OrderID = orderId,
-                FirstName = checkout.FirstName,
-                LastName = checkout.LastName,
-                Email = checkout.Email,
-                Address = checkout.Address,
-                City = checkout.City,
-                District = checkout.District,
-                PostalCode = checkout.PostalCode,
-                PhoneNumber = checkout.PhoneNumber,
+                FirstName = model.FirstName,
+                LastName = model.LastName,
+                Email = model.Email,
+                Address = model.Address,
+                City = model.City,
+                District = model.District,
+                PostalCode = model.PostalCode,
+                PhoneNumber = model.PhoneNumber,
             };
             await _orderRepository.CreateOrderInfoAsync(orderInfo);
-            // Sepeti temizle
+
             _cartService.ClearCart();
 
-            return orderId;
+            return (true, $"Siparişiniz başarıyla oluşturuldu. Sipariş ID: {orderId}");
         }
     }
 }

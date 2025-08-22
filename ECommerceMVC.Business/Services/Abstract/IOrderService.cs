@@ -1,15 +1,14 @@
 ﻿using ECommerceMVC.Core.Models.Request;
 using ECommerceMVC.Entities.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ECommerceMVC.Business.Services.Abstract
 {
     public interface IOrderService
     {
-        Task<int> CreateOrderAsync(Order order, List<CartItem>cartItems, CheckoutRequest checkout); // List<CartItem> sepetteki ürünler
+        // Checkout sayfası için model hazırla (0 iş controller)
+        Task<CheckoutRequest> GetCheckoutRequestAsync(int? customerId);
+
+        // Sepet ve checkout ile siparişi işle
+        Task<(bool Success, string Message)> ProcessCheckoutAsync(int? customerId, CheckoutRequest checkout);
     }
 }

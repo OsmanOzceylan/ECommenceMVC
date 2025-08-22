@@ -1,8 +1,7 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
 using ECommerceMVC.Core.Models.Response;
 using ECommerceMVC.DataAccess.Repositories.Abstract;
-using System.Collections.Generic;
-using System.Linq;
+using System.Text.Json;
 
 namespace ECommerceMVC.Business.Services.Concrete
 {
@@ -37,6 +36,34 @@ namespace ECommerceMVC.Business.Services.Concrete
                 UnitPrice = f.UnitPrice,
                 ImageUrl = f.ImageUrl
             }).ToList();
+        }
+
+        public List<int> GetFavoriteIdsByCustomer(int customerId)
+        {
+            return GetFavoritesByCustomer(customerId).Select(f => f.ProductID).ToList();
+        }
+
+        public bool IsFavorite(int productId, string cookieValue)
+        {
+            if (string.IsNullOrEmpty(cookieValue)) return false;
+
+            var favorites = JsonSerializer.Deserialize<List<ProductResponseModel>>(cookieValue);
+            return favorites.Any(p => p.ProductID == productId);
+        }
+
+        // FavoriteService'e ekle
+        public bool IsFavorite(int productId, int? customerId, string cookieValue)
+        {
+            if (customerId != null)
+            {
+                // Login olmuş kullanıcı
+                return GetFavoriteIdsByCustomer(customerId.Value).Contains(productId);
+            }
+
+            // Cookie tabanlı kontrol
+            if (string.IsNullOrEmpty(cookieValue)) return false;
+            var favorites = JsonSerializer.Deserialize<List<ProductResponseModel>>(cookieValue);
+            return favorites.Any(p => p.ProductID == productId);
         }
 
         public void RemoveFromFavorites(int customerId, int productId)

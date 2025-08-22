@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ECommerceMVC.Core.Models.Request
+﻿namespace ECommerceMVC.Core.Models.Request
 {
     public class OrderRequest
     {

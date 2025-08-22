@@ -1,6 +1,5 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
 using ECommerceMVC.Core.Models.Request;
-using ECommerceMVC.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ECommerceMVC.Web.Controllers

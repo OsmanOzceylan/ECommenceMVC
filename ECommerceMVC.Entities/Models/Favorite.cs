@@ -3,9 +3,9 @@ namespace ECommerceMVC.Entities.Models
 {
     public class Favorite : BaseClass
     {
-       public int FavoriteID { get; set; }
-       public int CustomerID { get; set; }
-       public int ProductID { get; set; }
+        public int FavoriteID { get; set; }
+        public int CustomerID { get; set; }
+        public int ProductID { get; set; }
 
 
         // joinden gelen

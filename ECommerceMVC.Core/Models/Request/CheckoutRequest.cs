@@ -22,7 +22,6 @@ namespace ECommerceMVC.Core.Models.Request
 
         [Required(ErrorMessage = "Ülke zorunludur.")]
         public string Country { get; set; }
-
         public string? District { get; set; }
 
         [Required(ErrorMessage = "Posta kodu zorunludur.")]

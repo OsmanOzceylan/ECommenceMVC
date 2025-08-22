@@ -103,7 +103,7 @@ namespace ECommerceMVC.DataAccess.Repositories.Concrete
                 CategoryName = product.CategoryName,
                 UnitPrice = product.UnitPrice,
                 ImageUrl = product.ImageUrl,
-                Quantity = 1,       
+                Quantity = 1,
                 TotalSold = product.TotalSold
             };
         }

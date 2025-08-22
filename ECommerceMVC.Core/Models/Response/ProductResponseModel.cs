@@ -9,5 +9,7 @@
         public int Quantity { get; set; }
         public int TotalSold { get; set; }
         public string? ImageUrl { get; set; }
+
+        public bool IsFavorite { get; set; } = false;
     }
 }

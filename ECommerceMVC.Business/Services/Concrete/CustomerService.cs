@@ -1,9 +1,9 @@
 ﻿using ECommerceMVC.Business.Helper;
 using ECommerceMVC.Business.Services.Abstract;
 using ECommerceMVC.Core.Models.Request;
+using ECommerceMVC.Core.Utilities;
 using ECommerceMVC.DataAccess.Repositories.Abstract;
 using ECommerceMVC.Entities.Models;
-using ECommerceMVC.Core.Utilities;
 
 namespace ECommerceMVC.Business.Services.Concrete
 {

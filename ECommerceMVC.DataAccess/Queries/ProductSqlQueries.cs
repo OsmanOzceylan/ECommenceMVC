@@ -65,9 +65,11 @@
             FROM Products";
 
         public static string GetProductById = @"SELECT p.ProductID, p.ProductName, c.CategoryName, p.UnitPrice, p.ImageUrl
-FROM Products p
-INNER JOIN Categories c ON p.CategoryID = c.CategoryID
-WHERE p.ProductID = @ProductID";
+            FROM Products p
+            INNER JOIN Categories c ON p.CategoryID = c.CategoryID
+            WHERE p.ProductID = @ProductID";
+
+
     }
 
 }

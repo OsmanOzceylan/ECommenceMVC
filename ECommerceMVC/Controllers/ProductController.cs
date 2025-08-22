@@ -1,106 +1,54 @@
 ﻿using ECommerceMVC.Business.Services.Abstract;
-using ECommerceMVC.Core.Models.Response;
-using ECommerceMVC.Entities.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace ECommerceMVC.Web.Controllers
 {
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
-        private readonly ICategoryService _categoryService;
         private readonly ICartService _cartService;
 
-        public ProductController(IProductService productService, ICategoryService categoryService, ICartService cartService)
+        public ProductController(IProductService productService, ICartService cartService)
         {
             _productService = productService;
-            _categoryService = categoryService;
             _cartService = cartService;
         }
 
-        // Ürün listesi (mevcut Index)
-        public async Task<IActionResult> Index(int? categoryId, string categoryName)
+        // Ürün listeleme - tüm hesaplama ve hazırlık service’de
+        public async Task<IActionResult> Index(int? categoryId, string categoryName, int page = 1, int pageSize = 8)
         {
-            var categories = await _categoryService.GetAllCategoriesAsync();
-            ViewBag.Categories = categories;
-
-            List<ProductResponseModel> products;
-
-            if (categoryId.HasValue)
-                products = await _productService.GetProductsByCategoryAsync(categoryId.Value);
-            else if (!string.IsNullOrEmpty(categoryName))
-                products = await _productService.GetProductsByCategoryNameAsync(categoryName);
-            else
-                products = await _productService.GetAllProductsAsync();
-
-            return View(products);
+            var customerId = HttpContext.Session.GetInt32("CustomerID");
+            var model = await _productService.GetProductListViewModelAsync(categoryId, categoryName, page, pageSize, customerId);
+            return View(model);
         }
 
-        // Ürün detay sayfası
+        // Ürün detay - tüm veri ve favori durumu service’de
         public async Task<IActionResult> Details(int productId)
         {
-            var product = await _productService.GetProductByIdAsync(productId);
-            if (product == null) return NotFound();
-
+            var customerId = HttpContext.Session.GetInt32("CustomerID");
             var favoriteCookie = Request.Cookies["FavoriteProducts"];
-            var favorites = string.IsNullOrEmpty(favoriteCookie)
-                ? new List<ProductResponseModel>()
-                : JsonSerializer.Deserialize<List<ProductResponseModel>>(favoriteCookie);
+            var model = await _productService.GetProductDetailsViewModelAsync(productId, customerId, favoriteCookie);
 
-            ViewBag.IsFavorite = favorites.Any(p => p.ProductID == productId);
-
-            return View(product);
+            if (model == null) return NotFound();
+            return View(model);
         }
-
-        // Sepete ekleme
+        // Sepete ekleme - iş mantığı service’de
+        [HttpPost]
         [HttpPost]
         public IActionResult AddToCart(int productId, string productName, decimal unitPrice, string imageUrl)
         {
-            if (HttpContext.Session.GetInt32("CustomerID") == null)
-            {
-                TempData["ErrorMessage"] = "Lütfen giriş yapın.";
+            var customerId = HttpContext.Session.GetInt32("CustomerID");
+            if (customerId == null)
                 return RedirectToAction("CustomerLogin", "Account");
-            }
 
-            _cartService.AddToCart(productId, productName, unitPrice, imageUrl);
-            TempData["SuccessMessage"] = $"{productName} sepete eklendi.";
-            return RedirectToAction("Details", new { productId });
-        }
+            var result = _cartService.AddToCart(productId, productName, unitPrice, imageUrl);
+            TempData[result.Success ? "SuccessMessage" : "ErrorMessage"] = result.Message;
 
-        // Favori ekleme / çıkarma
-        [HttpPost]
-        public IActionResult ToggleFavorite(int productId, string productName, decimal unitPrice, string imageUrl)
-        {
-            if (!User.Identity.IsAuthenticated)
-            {
-                TempData["ErrorMessage"] = "Lütfen giriş yapın.";
-                return RedirectToAction("CustomerLogin", "Account");
-            }
-
-            var favoriteCookie = Request.Cookies["FavoriteProducts"];
-            var favorites = string.IsNullOrEmpty(favoriteCookie)
-                ? new List<ProductResponseModel>()
-                : JsonSerializer.Deserialize<List<ProductResponseModel>>(favoriteCookie);
-
-            var existing = favorites.FirstOrDefault(p => p.ProductID == productId);
-            if (existing != null)
-                favorites.Remove(existing);
-            else
-                favorites.Add(new ProductResponseModel
-                {
-                    ProductID = productId,
-                    ProductName = productName,
-                    UnitPrice = unitPrice,
-                    ImageUrl = imageUrl
-                });
-
-            Response.Cookies.Append("FavoriteProducts", JsonSerializer.Serialize(favorites), new CookieOptions
-            {
-                Expires = DateTimeOffset.UtcNow.AddDays(30)
-            });
-
-            return RedirectToAction("Details", new { productId });
+            var referer = Request.Headers["Referer"].ToString();
+            return !string.IsNullOrEmpty(referer)
+                ? Redirect(referer)
+                : RedirectToAction("Index", "Product");
         }
     }
 }

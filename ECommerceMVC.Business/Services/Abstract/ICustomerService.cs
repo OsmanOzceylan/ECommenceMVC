@@ -1,6 +1,6 @@
 ﻿using ECommerceMVC.Core.Models.Request;
-using ECommerceMVC.Entities.Models;
 using ECommerceMVC.Core.Utilities;
+using ECommerceMVC.Entities.Models;
 
 namespace ECommerceMVC.Business.Services.Abstract
 {
